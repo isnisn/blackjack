@@ -24,16 +24,16 @@ char *cards[] = {
 
 typedef struct Card {
   
-  int suit;
-  int num;
-  int unicode;
-  int value;
+  int8_t suit;
+  int8_t num;
+  int8_t unicode;
+  int8_t value;
 
 } Card;
 
 typedef struct Deck {
 
-  int size; // Size of the deck
+  int8_t size; // Size of the deck
   Card **cards; // Card-array of Card-pointers to card-structs.
   
 } Deck;
@@ -99,7 +99,7 @@ static int randInt(int n) {
 }
 
 void shuffle(Deck *deck) {
-  
+
     int i, j;
     Card *tmp;
  
@@ -117,7 +117,7 @@ Card *getRndCard(Deck *deck) {
     return NULL;
 
   int rnd = 0;
-  Card *card = malloc(sizeof(Card *));
+  Card *card = malloc(sizeof(Card));
 
   rnd = rand() % deck->size;
   
@@ -181,8 +181,8 @@ void freeDeck(Deck *deck) {
   // Frees the deck.
   for (int i = 0; i < deck->size; i++)
   {
-      Card *card = deck->cards[i];
-      free(card);
+      
+      free(deck->cards[i]);
   }
   
   free(deck->cards);
@@ -201,7 +201,7 @@ void printCard(Card *card) {
 
 Deck *initDeck() {
 
-  Deck *deck = malloc(sizeof(Deck *));
+  Deck *deck = malloc(sizeof(Deck));
   deck->size = DECK_SIZE * NO_DECKS;
 
   // Create space for 52 Card(s). More specifically size of the deck.

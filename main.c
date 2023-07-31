@@ -4,6 +4,7 @@
 */
 
 #include <string.h>
+#include <stdint.h>
 #include "include/deck.h"
 #include "include/player.h"
 
@@ -27,11 +28,11 @@ int main() {
   // Player
   size_t maxSizePlayerHand = 5;
   
-  Hand *hand = malloc(sizeof(Hand *));
+  Hand *hand = malloc(sizeof(Hand));
   hand->cards = calloc(maxSizePlayerHand, sizeof(Card *));
   hand->size = maxSizePlayerHand;
 
-  for(int i=0;i<maxSizePlayerHand;i++) {  
+  for(int32_t i=0;i<maxSizePlayerHand;i++) {  
     Card *card = getRndCard(deck);
 
       if(card != NULL) {

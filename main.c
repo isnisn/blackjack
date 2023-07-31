@@ -29,6 +29,7 @@ int main() {
   
   Hand *hand = malloc(sizeof(Hand *));
   hand->cards = calloc(maxSizePlayerHand, sizeof(Card *));
+  hand->size = maxSizePlayerHand;
 
   for(int i=0;i<maxSizePlayerHand;i++) {  
     Card *card = getRndCard(deck);
@@ -45,6 +46,7 @@ int main() {
 
   // Free resources, no memory leaks plz
   freeDeck(deck);
+  freePlayer(player);
 
   return 0;
 }

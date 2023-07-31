@@ -126,8 +126,8 @@ Card *getRndCard(Deck *deck) {
   card->unicode = deck->cards[rnd]->unicode;
   card->value = deck->cards[rnd]->value;
 
-  printf("Dealing: ");
-  printCard(card);
+  //printf("Dealing: ");
+  //printCard(card);
 
   free(deck->cards[rnd]);
   deck->cards[rnd] = NULL;

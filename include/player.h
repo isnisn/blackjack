@@ -1,31 +1,33 @@
 #include <stdio.h>
 
-typedef struct Players {
+typedef struct Players_t {
 
-  int32_t maxPlayers;
-  struct Player **player;
+  int maxPlayers;
+  struct Player_t **player;
 
-} Players;
+} Players_t;
 
-typedef struct Player {
+typedef struct Player_t {
 
   char name[20];
-  struct Hand *hand;
+  int32_t tmpMoney;
+  int32_t socket;
+  struct Hand_t *hand;
 
-} Player;
+} Player_t;
 
-typedef struct Hand {
+typedef struct Hand_t {
 
-  int size;
-  struct Card **cards;
+  int8_t size; // Will never be greater than 255
+  struct Card_t **cards;
 
-} Hand;
+} Hand_t;
 
-void freePlayer(Players *players) {
+void freePlayer(Players_t *players) {
 
   for(int j=0; j<players->maxPlayers; j++) {
 
-    Player *player = players->player[j];
+    Player_t *player = players->player[j];
     
     for(int i=0; i<player->hand->size; i++) {
       free(player->hand->cards[i]);

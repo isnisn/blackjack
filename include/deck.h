@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define DECK_SIZE 52
-#define NO_DECKS 1
+const int NO_DECKS = 4;
 
 char *suits[] = {"Hearts", "Diamonds", "Clubs", "Spades"};
 char *nums[] = {"","","2","3","4","5","6","7","8","9","10","Jack","Queen", "King", "Ace"};
@@ -22,36 +22,36 @@ char *cards[] = {
     "🂢", "🂣", "🂤", "🂥", "🂦", "🂧", "🂨", "🂩", "🂪", "🂫", "🂭", "🂮", "🂱" // Spades
 };
 
-typedef struct Card {
+typedef struct Card_t {
   
-  int8_t suit;
-  int8_t num;
-  int8_t unicode;
-  int8_t value;
+  int suit;
+  int num;
+  int unicode;
+  int value;
 
-} Card;
+} Card_t;
 
-typedef struct Deck {
+typedef struct Deck_t {
 
-  int8_t size; // Size of the deck
-  Card **cards; // Card-array of Card-pointers to card-structs.
+  int size; // Size of the deck
+  Card_t **cards; // Card-array of Card-pointers to card-structs.
   
-} Deck;
+} Deck_t;
 
-Card *createCard(Deck *deck, int, int, int, int);
-void printDeck(Deck *deck);
-void resizeDeck(Deck *deck, int newSize);
+Card_t *createCard(int32_t, int32_t, int32_t, int32_t);
+void printDeck(Deck_t *deck);
+void resizeDeck(Deck_t *deck, int newSize);
 static int randInt(int n);
-void shuffle(Deck *deck);
-Card *getRndCard(Deck *deck);
-void createDeck(Deck *deck);
-void freeDeck(Deck *deck);
-void printCard(Card *card);
-Deck *initDeck();
+void shuffle(Deck_t *deck);
+Card_t *getRndCard(Deck_t *deck);
+void createDeck(Deck_t *deck);
+void freeDeck(Deck_t *deck);
+void printCard(Card_t *card);
+Deck_t *initDeck();
 
-Card *createCard(Deck *deck, int num, int suit, int unicode, int value) {
+Card_t *createCard(int num, int suit, int unicode, int value) {
 
-  Card *card = malloc(sizeof(Card));
+  Card_t *card = malloc(sizeof(Card_t));
   
   card->value = value;
   card->num = num;
@@ -62,11 +62,10 @@ Card *createCard(Deck *deck, int num, int suit, int unicode, int value) {
 
 }
 
-void printDeck(Deck *deck) {
+void printDeck(Deck_t *deck) {
 
 char *suit, *num, *unicode;
 int value;
-
 
   for(int i=0;i<deck->size;i++) {
 
@@ -79,9 +78,9 @@ int value;
   }
 }
 
-void resizeDeck(Deck *deck, int newSize) {
+void resizeDeck(Deck_t *deck, int newSize) {
 
-  deck->cards = realloc(deck->cards, newSize * sizeof(Card *));
+  deck->cards = realloc(deck->cards, newSize * sizeof(Card_t*));
 
 }
 
@@ -98,10 +97,10 @@ static int randInt(int n) {
     return rnd % n;
 }
 
-void shuffle(Deck *deck) {
+void shuffle(Deck_t *deck) {
 
     int i, j;
-    Card *tmp;
+    Card_t *tmp;
  
     for (i = deck->size - 1; i > 0; i--) {
         j = randInt(i + 1);
@@ -111,13 +110,13 @@ void shuffle(Deck *deck) {
    }
 }
 
-Card *getRndCard(Deck *deck) {
+Card_t *getRndCard(Deck_t *deck) {
   
   if(deck->size == 0)
     return NULL;
 
   int rnd = 0;
-  Card *card = malloc(sizeof(Card));
+  Card_t *card = malloc(sizeof(Card_t));
 
   rnd = rand() % deck->size;
   
@@ -125,9 +124,6 @@ Card *getRndCard(Deck *deck) {
   card->num = deck->cards[rnd]->num;
   card->unicode = deck->cards[rnd]->unicode;
   card->value = deck->cards[rnd]->value;
-
-  //printf("Dealing: ");
-  //printCard(card);
 
   free(deck->cards[rnd]);
   deck->cards[rnd] = NULL;
@@ -144,7 +140,7 @@ Card *getRndCard(Deck *deck) {
 
 }
 
-void createDeck(Deck *deck) {
+void createDeck(Deck_t *deck) {
 
   int num = 2;
   int deckIndex = 0;
@@ -160,28 +156,26 @@ void createDeck(Deck *deck) {
     
     // Create 13 cards 2 - 14 with suit.
       for(int i=0;i<13;i++) {
-        deck->cards[deckIndex] = createCard(deck, num, suit, unicode, value);
+        deck->cards[deckIndex] = createCard(num, suit, unicode, value);
         ++value;
         ++num;
         ++deckIndex;
         ++unicode;
       }
+
       value = 2;
       num = 2;
       ++suit;
     }
-
+    unicode = 0;
     ++noDecks;
   }
 }
 
-/* Juhuuu some tidying up */
-void freeDeck(Deck *deck) {
+void freeDeck(Deck_t *deck) {
   
   // Frees the deck.
-  for (int i = 0; i < deck->size; i++)
-  {
-      
+  for (int i = 0; i < deck->size; i++) {
       free(deck->cards[i]);
   }
   
@@ -189,23 +183,22 @@ void freeDeck(Deck *deck) {
   free(deck);
 }
 
-void printCard(Card *card) {
+void printCard(Card_t *card) {
   
     char *suit = suits[card->suit];
     char *num = nums[card->num];
     char *unicode = cards[card->unicode];
-    int value = card->value;
-
-    printf("Card is %s [%s of %s] num val: %d\n", unicode, num, suit, value);
+    
+    printf("Card is %s [%s of %s]\n", unicode, num, suit);
 }
 
-Deck *initDeck() {
+Deck_t *initDeck() {
 
-  Deck *deck = malloc(sizeof(Deck));
+  Deck_t *deck = malloc(sizeof(Deck_t));
   deck->size = DECK_SIZE * NO_DECKS;
 
   // Create space for 52 Card(s). More specifically size of the deck.
-  deck->cards = calloc(deck->size, sizeof(Card *));
+  deck->cards = calloc(deck->size, sizeof(Card_t *));
 
   // Create cards in the deck.
   createDeck(deck);

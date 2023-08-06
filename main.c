@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include "include/deck.h"
 #include "include/player.h"
+#include "include/colors.h"
 
 typedef struct Dealer_t {
   Hand_t *hand;
@@ -22,27 +23,15 @@ Dealer_t *initDealer() {
   return malloc(sizeof(Dealer_t));
 }
 
-int main() {
+/*
+* Generate a random hand with n-cards. Allocate space for handSize so
+* we can hold for example 2 cards initially and 10 in total.
+* @return pointer to allocated Hand_t
+*/
+Hand_t *generateHand(Deck_t *deck,int maxInitialCards, int handSize) {
 
-  printf("++++++++++ Welcome to Blackjack! ++++++++++++ \n Starting game, good luck! \n\n\n");
-
-  size_t maxInitialCards = 2;
-  size_t maxCards = 10;
-
-  size_t maxPlayers = 4;
-
-  // Initialize a deck and a dealer.
-  Deck_t *deck = initDeck(); 
-  shuffle(deck);
-
-  Dealer_t *dealer = initDealer(); 
-
-  // Seed the rng, only once per thread!  
-  srand(time(NULL)); 
-
-  // Assign hand to dealer
   Hand_t *hand = malloc(sizeof(Hand_t));
-  hand->cards = calloc(maxCards, sizeof(Card_t *));
+  hand->cards = calloc(handSize, sizeof(Card_t *));
   hand->size = maxInitialCards;
 
   for(size_t i=0;i<maxInitialCards;i++) {  
@@ -53,10 +42,30 @@ int main() {
     }
   }
 
-  dealer->hand = hand;
+  return hand;
+}
+
+int main() {
+
+  printf("%s++++++++++ Welcome to Blackjack! ++++++++++++ \n Starting game, good luck! %s\n\n", COLOR_BOLD, COLOR_OFF);
+
+  size_t maxInitialCards = 2;
+  size_t maxCards = 10;
+  size_t maxPlayers = 2;
+
+  // Initialize a deck and a dealer.
+  Deck_t *deck = initDeck(); 
+  Dealer_t *dealer = initDealer(); 
+
+  shuffle(deck);
+
+  // Seed the rng, only once per thread!  
+  srand(time(NULL)); 
+
+  dealer->hand = generateHand(deck, maxInitialCards, maxCards);
 
   printf("Dealer shows:");
-  printCard(hand->cards[0]);
+  printCard(dealer->hand->cards[0]);
 
   // New players list.
   Players_t *players = malloc(sizeof(Players_t));
@@ -72,21 +81,7 @@ int main() {
     sprintf(name, "%d",i+1);
     strncpy(player->name, name,sizeof(name));
 
-    // Assign a hand and cards to the hand (Move to own function later)
-    Hand_t *hand = malloc(sizeof(Hand_t));
-    hand->cards = calloc(maxCards, sizeof(Card_t *));
-    hand->size = maxInitialCards;
-
-    // Dealing n cards.
-    for(size_t i=0;i<maxInitialCards;i++) {  
-      Card_t *card = getRndCard(deck);
-
-      if(card != NULL) {
-        hand->cards[i] = card;
-      }
-    }
-
-    player->hand = hand;
+    player->hand = generateHand(deck, maxInitialCards, maxCards);
     players->player[i] = player;
   }
 
@@ -110,8 +105,6 @@ int main() {
       printCard(crd);
     }
 
-    // Check for blackjack.
-  
     int cardCount = 0;
     int cardSum = 0;
     
@@ -158,18 +151,17 @@ int main() {
   printf("\n\n Dealer: \n");
   
   int8_t sum = 0;
-  hand = dealer->hand;
 
   // First sum up the two cards dealer has on hand.
   for(size_t i = 0; i < maxInitialCards; ++i) {
-    if(hand->cards[i]->value) {
-      sum += hand->cards[i]->value > 10 ? 10 : hand->cards[i]->value;
-    }
-    printCard(hand->cards[i]);
-  }
-  printf("Dealer has initially: %d \n\n", sum);
 
-  while(sum < 16) {
+      sum += dealer->hand->cards[i]->value > 10 ? 10 : dealer->hand->cards[i]->value;
+  
+    printCard(dealer->hand->cards[i]);
+  }
+  printf("%sDealer%s has: %d \n\n", AC_RED, AC_NORMAL,sum );
+
+  while(sum < 17) {
 
     crd = getRndCard(deck);
 

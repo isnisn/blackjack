@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include "colors.h"
 
 #define DECK_SIZE 52
 const int NO_DECKS = 4;
@@ -189,7 +190,7 @@ void printCard(Card_t *card) {
     char *num = nums[card->num];
     char *unicode = cards[card->unicode];
     
-    printf("Card is %s [%s of %s]\n", unicode, num, suit);
+    printf("%s%s [%s of %s]%s\n", AC_GREEN, unicode, num, suit, COLOR_OFF);
 }
 
 Deck_t *initDeck() {

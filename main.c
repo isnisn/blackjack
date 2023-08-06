@@ -41,8 +41,13 @@ Hand_t *generateHand(Deck_t *deck,int maxInitialCards, int handSize) {
       hand->cards[i] = card;
     }
   }
-
+ 
   return hand;
+}
+
+uint8_t calculateHandValue(Hand_t *hand) {
+  uint8_t sum = 0;
+  return sum;
 }
 
 int main() {
